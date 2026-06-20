@@ -1,27 +1,20 @@
 -- made by bobo135, OP
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
-
 local TargetGui = game:GetService("CoreGui") or LocalPlayer:WaitForChild("PlayerGui")
-
 local CollectRemote = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net"):WaitForChild("RF/Collect")
 local BallDropRemote = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net"):WaitForChild("RE/BallDrop")
 local RebirthRemote = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net"):WaitForChild("RF/Rebirth")
-local PurchaseRemote = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net"):WaitForChild("RE/PurchaseSign")
 local BrainrotRemote = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net"):WaitForChild("RF/EquipBestBrainrots")
-
 local autoCollect = false
 local autoDrop = false
 local autoRebirth = false
-local autoBuy = false
 local autoBrainrot = false
 local MaxSlots = 12 
 local DetectedPlotName = "Plot4"
-
 local OFF_COLOR = Color3.fromRGB(150, 40, 40)
 
 local function FindPlayerPlot()
@@ -38,7 +31,6 @@ local function FindPlayerPlot()
             return obj.Name, obj
         end
     end
-    
     for _, obj in ipairs(Workspace:GetDescendants()) do
         if obj:IsA("Model") or obj:IsA("Folder") then
             if string.find(string.lower(obj.Name), string.lower(LocalPlayer.Name)) then
@@ -46,7 +38,6 @@ local function FindPlayerPlot()
             end
         end
     end
-    
     local plotsFolder = Workspace:FindFirstChild("Plots") or Workspace:FindFirstChild("Tycoons")
     if plotsFolder then
         for _, plot in ipairs(plotsFolder:GetChildren()) do
@@ -59,7 +50,6 @@ local function FindPlayerPlot()
             return DetectedPlotName, plotsFolder[DetectedPlotName]
         end
     end
-    
     return DetectedPlotName, nil
 end
 
@@ -73,8 +63,8 @@ ScreenGui.Parent = TargetGui
 ScreenGui.ResetOnSpawn = false
 
 local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 280, 0, 345) 
-Frame.Position = UDim2.new(0.5, -140, 0.3, -172)
+Frame.Size = UDim2.new(0, 280, 0, 325)
+Frame.Position = UDim2.new(0.5, -140, 0.3, -162)
 Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 Frame.Active = true
 Frame.Draggable = true
@@ -117,8 +107,7 @@ end
 local CollectBtn  = CreateButton("Auto Collect", 50)
 local DropBtn     = CreateButton("Auto Drop Balls", 105)
 local RebirthBtn  = CreateButton("Auto Rebirth", 160)
-local BuyBtn      = CreateButton("Auto Buy Slots", 215)
-local BrainrotBtn = CreateButton("Auto Equip Best Brainrot", 270)
+local BrainrotBtn = CreateButton("Auto Equip Best Brainrot", 215)
 
 local ActiveButtons = {}
 local CurrentRainbowColor = Color3.fromRGB(255, 255, 255)
@@ -149,14 +138,9 @@ RebirthBtn.MouseButton1Click:Connect(function()
     SetButtonState(RebirthBtn, autoRebirth, "Auto Rebirth")
 end)
 
-BuyBtn.MouseButton1Click:Connect(function()
-    autoBuy = not autoBuy
-    SetButtonState(BuyBtn, autoBuy, "Auto Buy Buttons")
-end)
-
 BrainrotBtn.MouseButton1Click:Connect(function()
     autoBrainrot = not autoBrainrot
-    SetButtonState(BrainrotBtn, autoBrainrot, "Auto Equip Brainrot")
+    SetButtonState(BrainrotBtn, autoBrainrot, "Auto Equip Best Brainrot")
 end)
 
 task.spawn(function()
@@ -209,25 +193,6 @@ task.spawn(function()
         if autoRebirth and RebirthRemote:IsA("RemoteFunction") then
             pcall(function()
                 RebirthRemote:InvokeServer()
-            end)
-        end
-    end
-end)
-
-task.spawn(function()
-    while true do
-        task.wait(0.5)
-        if autoBuy and PurchaseRemote:IsA("RemoteEvent") then
-            pcall(function()
-                local _, plotInstance = FindPlayerPlot()
-                
-                if plotInstance then
-                    local targetSign = plotInstance:FindFirstChild("PurchaseSign")
-                    
-                    if targetSign then
-                        PurchaseRemote:FireServer(targetSign)
-                    end
-                end
             end)
         end
     end
