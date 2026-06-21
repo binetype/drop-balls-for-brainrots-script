@@ -189,7 +189,7 @@ task.spawn(function()
         task.wait(0.1)
         if autoDrop and BallDropRemote:IsA("RemoteEvent") then
             pcall(function()
-                BallDropRemote:FireServer(3)
+                BallDropRemote:FireServer(7)
             end)
         end
     end
